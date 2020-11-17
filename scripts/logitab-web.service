@@ -1,0 +1,12 @@
+[Unit]
+Description=Gunicorn instance to serve myapp
+After=network.target
+
+[Service]
+WorkingDirectory=/home/ubuntu/logi-back-py
+Environment="PATH=/home/ubuntu/logi-back-py/env/bin"
+ExecStart=/home/ubuntu/logi-back-py/env/bin/gunicorn app:factory --bind unix:/home/ubuntu/logi-back-py/nginx.sock --worker-class aiohttp.GunicornWebWorker
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target

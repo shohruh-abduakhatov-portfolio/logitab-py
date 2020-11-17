@@ -1,0 +1,10 @@
+version: "3.2"
+services: 
+    main-app:
+        # build: .
+        image: "app"
+        command: "python services/app_main.py"
+        volumes:
+            - ".:/code:rw"
+        ports: 
+            - 5000:5000

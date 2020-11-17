@@ -1,0 +1,37 @@
+
+
+variables:
+    AWS_DEFAULT_REGION: "us-east-2"
+    AWS_SECRET_ACCESS_KEY: ""
+    AWS_ACCESS_KEY_ID: ""
+    AWS_S3_LOCATION: "s3://logitab-codepipeline-deployment/logitab-back-py.zip"
+
+stages:
+  - deploy
+
+
+production::
+# Script to run for deploying application to AWS
+  script:
+    - apt-get --quiet install --yes python-pip # AWS CLI requires python-pip, python is installed by default
+    - pip install -U pip  # pip update
+    - pip install awscli  # AWS CLI installation
+    - $G build -x test -x distTar # # Build the project with Gradle
+    - $G distZip  # creates distribution zip for deployment
+    - aws s3 cp $BUNDLE_SRC $AWS_S3_LOCATION # Uploads the zipfile to S3 and expects the AWS Code Pipeline/Code Deploy to pick up
+  # requires previous CI stages to succeed in order to execute
+  when: on_success
+  stage: deploy
+  environment: production
+  cache:
+    key: "$CI_COMMIT_REF_SLUG"
+    untracked: true
+    paths:
+        - build/
+  # Applies only to tags matching the regex: ie: v1.0.0-My-App-Release
+  only:
+    - /^v\d+\.\d+\.\d+-.*$/
+  except:
+    - branches
+    - triggers
+

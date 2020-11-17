@@ -1,0 +1,14 @@
+postgres:
+  database: dev
+  user: logitab
+  password: 1qaz2wsx3edc
+  host: localhost
+  port: 3336
+
+redis:
+  port: 3334
+  host: localhost
+
+secret_key:
+#lifelong is in minutes
+token_lifetime: 1440 # now 1 day

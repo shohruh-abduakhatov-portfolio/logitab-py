@@ -1,0 +1,66 @@
+import json
+
+from aiohttp import hdrs, web
+
+
+__all__ = [
+    "AioRestException",
+    "ValidationError",
+    "ObjectNotFound",
+    "MultipleObjectsReturned",
+    "HTTPNotFound",
+]
+
+
+class AioRestException(Exception):
+    """Base class for aiohttp-rest-framework errors"""
+
+
+class ValidationError(web.HTTPBadRequest):
+    """Like ma's ValidationError`, but raises Http 400"""
+
+
+    def __init__(self, detail=None, **kwargs):
+        super().__init__(**kwargs)
+        self._headers[hdrs.CONTENT_TYPE] = "application/json"
+        self.text = json.dumps(detail)
+
+
+class DatabaseException(AioRestException):
+    """All database related exceptions"""
+
+
+class ObjectNotFound(DatabaseException):
+    """Database service returned 0 object on `get` method call"""
+
+
+class MultipleObjectsReturned(DatabaseException):
+    """Database service returned more than one object on `get` method call"""
+
+
+class HTTPNotFound(web.HTTPNotFound):
+    def __init__(self, detail: str = None, **kwargs):
+        super().__init__(**kwargs)
+        self._headers[hdrs.CONTENT_TYPE] = "application/json"
+        self.text = json.dumps({"error": detail or "Not found"})
+
+
+class HTTPForbidden(web.HTTPForbidden):
+    def __init__(self, detail: str = None, **kwargs):
+        super().__init__(**kwargs)
+        self._headers[hdrs.CONTENT_TYPE] = "application/json"
+        self.text = json.dumps({"error": detail or "Forbidden"})
+
+
+class HTTPUnauthorized(web.HTTPUnauthorized):
+    def __init__(self, detail: str = None, **kwargs):
+        super().__init__(**kwargs)
+        self._headers[hdrs.CONTENT_TYPE] = "application/json"
+        self.text = json.dumps({"error": detail or "Unauthorized"})
+
+
+class HTTPServiceError(web.HTTPServerError):
+    def __init__(self, detail: str = None, **kwargs):
+        super().__init__(**kwargs)
+        self._headers[hdrs.CONTENT_TYPE] = "application/json"
+        self.text = json.dumps({"error": detail or "Service error"})

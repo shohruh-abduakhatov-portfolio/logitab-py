@@ -1,0 +1,3 @@
+[submodule "modules/core"]
+	path = modules/core
+	url = git@gitlab.com:logitab/back-end-team/logi-core-py.git

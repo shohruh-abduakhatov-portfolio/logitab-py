@@ -1,0 +1,28 @@
+FROM python:3.7-alpine
+
+ENV PYTHONUNBUFFERED 1
+ENV C_FORCE_ROOT true
+WORKDIR /src
+ADD . /src
+RUN mkdir /var/www/
+COPY ./config/config.py /var/www
+
+RUN apk update && \
+    apk add --no-cache \
+        postgresql-dev \
+        gcc \
+        python3-dev \
+        musl-dev \
+        libc-dev \
+        libffi-dev \
+        openssl-dev \
+        make && \
+    rm -rf /var/cache/apk/* && \
+    rm -rf /var/lib/apt/lists/*
+RUN pip install -r logi_web/requirements.txt --no-cache-dir && \
+      pip install --no-cache-dir virtualenv &&\
+      python3 -m virtualenv --python=python3 virtualenv
+
+EXPOSE 8001
+
+CMD gunicorn app:factory --bind 0.0.0.0:8001 --worker-class aiohttp.GunicornWebWorker

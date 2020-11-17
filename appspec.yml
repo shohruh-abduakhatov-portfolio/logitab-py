@@ -1,0 +1,20 @@
+version: 0.0
+os: linux
+files:
+  - source: ./logitab-core-py
+    destination: /home/ubuntu/deploy
+permissions:
+  # sets application runner script as executable - This example assumes the sample 'my_app.sh' script has been added to the the directory 'my_app' and serves as the application launcher
+  - object: /home/ubuntu/deploy
+    pattern: "my_app.sh"
+    owner: ec2-user
+    mode: 755
+    type:
+      - file
+  # sets ec2-user as the owner:group for the application deployment directory
+  - object: /home/ubuntu/
+    pattern: "my_app"
+    owner: ec2-user
+    type:
+      - directory
+

@@ -1,0 +1,16 @@
+.env.prod
+.docker/
+.docker
+.docker/*
+redis-data/
+
+.idea
+__pycache__
+.pytest_cache/
+venv
+env
+.vscode/
+
+/logi_web/conf/prod.yaml
+logi_web/conf/prod.yaml
+config/config.py
